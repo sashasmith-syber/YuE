@@ -1,0 +1,38 @@
+# ONPU AI K2 Studio - Unified orchestration
+# Usage: docker-compose -f docker/docker-compose.yml up -d
+
+services:
+  python-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yue
+    image: onpu-k2-backend
+    container_name: onpu-k2-core
+    ports:
+      - "5000:5000"
+    environment:
+      - K2_HOST=0.0.0.0
+      - K2_PORT=5000
+      - PYTHONUNBUFFERED=1
+      # Optional: point to YuE repo on host
+      # - YUE_WORKSPACE=/yue
+    volumes:
+      - ..:/app:ro
+      - k2-data:/app/data
+    working_dir: /app
+    command: ["python3", "run.py"]
+    restart: unless-stopped
+
+  # Optional: Prometheus for metrics (when K2_PROMETHEUS_ENABLED=true)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: onpu-k2-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    profiles:
+      - monitoring
+
+volumes:
+  k2-data:

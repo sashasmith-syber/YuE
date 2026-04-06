@@ -1,0 +1,16 @@
+# Local metrics scraping for ONPU K2 Studio
+# Used when running: docker-compose --profile monitoring up
+
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "onpu-k2"
+    static_configs:
+      - targets: ["python-backend:5000"]
+    metrics_path: /metrics
+    # Enable only if app exposes /metrics (Prometheus client)
+    # relabel_configs:
+    #   - source_labels: [__address__]
+    #     target_label: instance
+    #     replacement: onpu-k2-backend

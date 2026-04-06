@@ -1,0 +1,8 @@
+{
+  "comment": "SHA256 hashes for model integrity verification. Add hashes after downloading from HuggingFace.",
+  "models": {
+    "m-a-p/YuE-s1-7B-anneal-en-cot": {},
+    "m-a-p/YuE-s1-7B-anneal-en-icl": {},
+    "m-a-p/YuE-s2-1B-general": {}
+  }
+}

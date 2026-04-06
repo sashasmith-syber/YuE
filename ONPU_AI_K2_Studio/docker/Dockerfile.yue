@@ -1,0 +1,26 @@
+# YuE-specific GPU container for ONPU K2 Studio
+# Build from project root: docker build -f docker/Dockerfile.yue -t onpu-k2-yue .
+# Requires: YUE repo cloned and xcodec_mini_infer in inference/
+
+ARG CUDA_VERSION=11.8
+FROM nvidia/cuda:${CUDA_VERSION}-cudnn8-runtime-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 python3-pip python3-venv \
+    git git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python deps (YuE + Flask for optional API)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# YuE workspace mounted at runtime via docker-compose (YUE_WORKSPACE)
+ENV YUE_WORKSPACE=/yue
+ENV PYTHONUNBUFFERED=1
+
+# Default: run YuE infer when container is used as worker
+# Override CMD for API-only or custom entrypoint
+CMD ["python3", "-c", "print('YuE worker; mount YUE repo and run infer wrapper')"]
